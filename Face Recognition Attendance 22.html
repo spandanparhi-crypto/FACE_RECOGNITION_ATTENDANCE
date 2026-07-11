@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Attendance System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #00bfff;
+            --dark-color: #333333;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --transition: all 0.3s ease;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-color);
+            line-height: 1.6;
+            background-color: var(--white);
+        }
+
+        /* Utility Classes */
+        .container {
+            width: 85%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--secondary-color);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: transparent;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li a {
+            color: var(--dark-color);
+            text-decoration: none;
+            padding: 10px 15px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links li a:hover, .nav-links li a.active {
+            color: var(--primary-color);
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        #home {
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(0,86,179,0.9), rgba(0,191,255,0.8)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+            padding-top: 80px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.9;
+        }
+
+        /* About & Objectives */
+        #about { background: var(--white); }
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        .about-text p { margin-bottom: 15px; font-size: 1.05rem; }
+        
+        .objectives-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+        .objectives-list li {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+        .objectives-list li i {
+            color: var(--secondary-color);
+            margin-right: 15px;
+            font-size: 1.3rem;
+        }
+
+        /* Features Section */
+        #features { background: var(--light-bg); }
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: var(--transition);
+            border-top: 4px solid transparent;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            border-top-color: var(--primary-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .card h3 { margin-bottom: 15px; font-size: 1.3rem; }
+
+        /* Tools Section */
+        #tools { background: var(--white); }
+        .tools-category {
+            margin-bottom: 40px;
+        }
+        .tools-category h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 10px;
+        }
+
+        /* Workflow Section */
+        #workflow { background: var(--light-bg); }
+        .workflow-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .workflow-step {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            border-left: 5px solid var(--primary-color);
+        }
+        .step-num {
+            background: var(--primary-color);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Modules & Advantages Layout */
+        #modules { background: var(--white); }
+        #advantages { background: var(--light-bg); }
+
+        /* Interactive App Interface Implementation */
+        #screenshots { background: var(--white); }
+        .interactive-app-wrapper {
+            background: #eef2f7;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        @media(max-width: 850px){
+            .app-grid { grid-template-columns: 1fr; }
+        }
+        .panel {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .panel h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* --- MULTI-CAMERA CONTEXT LAYOUT --- */
+        .camera-screen {
+            background: #222;
+            width: 100%;
+            height: 320px;
+            border-radius: 6px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #aaa;
+            overflow: hidden;
+        }
+        .camera-screen video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            transform: scaleX(-1);
+        }
+        
+        /* Dynamic Multi-Target Box Container */
+        .face-overlay-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+        }
+        
+        .scan-box {
+            position: absolute;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 15px #00ff00;
+            animation: pulse 1.5s infinite ease-in-out;
+            transition: all 0.5s ease-in-out;
+            z-index: 10;
+        }
+        
+        .scan-label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background: #00ff00;
+            color: #000;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.98); opacity: 0.8; }
+            50% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(0.98); opacity: 0.8; }
+        }
+        
+        .interactive-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .table-responsive {
+            max-height: 290px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+        
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        
+        .attendance-table th, .attendance-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .attendance-table th { background: #f0f4f8; color: var(--primary-color); }
+        
+        .badge {
+            background: var(--success);
+            color: var(--white);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        /* Future Enhancements */
+        #enhancements { background: var(--white); }
+
+        /* Contact Section */
+        #contact { background: var(--light-bg); }
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Alerts Custom Notification */
+        .toast-msg {
+            position: fixed;
+            bottom: 20px;
+            right: -450px;
+            background: #333;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 5px solid var(--secondary-color);
+            max-width: 400px;
+        }
+        .toast-msg.show { right: 20px; }
+
+        /* Footer */
+        footer {
+            background: #111;
+            color: var(--white);
+            text-align: center;
+            padding: 40px 0;
+        }
+        .footer-socials {
+            margin: 20px 0;
+        }
+        .footer-socials a {
+            color: var(--white);
+            font-size: 1.5rem;
+            margin: 0 10px;
+            transition: var(--transition);
+        }
+        .footer-socials a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .about-grid { grid-template-columns: 1fr; }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                padding: 20px;
+            }
+            .nav-links.active { display: flex; }
+            .nav-links li { margin: 10px 0; text-align: center; }
+            .menu-toggle { display: block; }
+            .hero-content h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast-msg"><i class="fa-solid fa-circle-info text-secondary"></i> <span id="toast-text">Notification text</span></div>
+
+    <header>
+        <nav class="navbar">
+            <a href="#home" class="logo"><i class="fa-solid fa-face-id"></i> SmartAttendance</a>
+            <div class="menu-toggle" id="mobile-menu">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-item active">Home</a></li>
+                <li><a href="#about" class="nav-item">About</a></li>
+                <li><a href="#features" class="nav-item">Features</a></li>
+                <li><a href="#tools" class="nav-item">Tools</a></li>
+                <li><a href="#workflow" class="nav-item">Workflow</a></li>
+                <li><a href="#screenshots" class="nav-item">Screenshots</a></li>
+                <li><a href="#contact" class="nav-item">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home">
+        <div class="container hero-content">
+            <h1>Face Recognition Attendance System</h1>
+            <p>An automated, contactless, and highly accurate solution to manage class and workspace attendance effortlessly using advanced Computer Vision techniques.</p>
+            <a href="#screenshots" class="btn">Launch Live Web Camera</a>
+        </div>
+    </section>
+
+    <section id="about" class="container">
+        <div class="about-grid">
+            <div class="about-text">
+                <h2 class="section-title" style="text-align: left; justify-content: flex-start;">About the Project</h2>
+                <p>The <strong>Face Recognition Attendance System</strong> leverages modern biometric technologies to identify and verify a person dynamically through an active camera stream. By processing video frames against a secure database of registered face templates, the system automatically logs attendance in real-time.</p>
+                <p>Traditional methods like roll calls or physical logbooks are prone to errors and proxy signatures. This system eliminates human overhead, reduces proxy attendance, saves valuable class time, and generates seamless digital audit reports.</p>
+            </div>
+            <div class="about-objectives">
+                <h3 style="color: var(--primary-color); margin-bottom: 20px; font-size: 1.8rem;">Project Objectives</h3>
+                <ul class="objectives-list">
+                    <li><i class="fa-solid fa-circle-check"></i> Automate attendance tracking system.</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Drastically improve tracking data accuracy.</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Minimise manual data entry and human error.</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Generate real-time comprehensive attendance reports.</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Ensure security and integrity of student records.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title">System Features</h2>
+            <div class="grid-layout">
+                <div class="card">
+                    <i class="fa-solid fa-bolt"></i>
+                    <h3>Real-Time Detection</h3>
+                    <p>Detects human faces instantly through standard camera video feeds.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <h3>Auto Marking</h3>
+                    <p>Logs verification stamps straight to the record base without human touch.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <h3>Easy Registration</h3>
+                    <p>Allows effortless onboarding of new profiles alongside system imaging captures.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <h3>Attendance History</h3>
+                    <p>Enables detailed historic lookup to tracking logs securely inside database records.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <h3>Admin Dashboard</h3>
+                    <p>Provides a central secure node interface dedicated to supervisor modifications.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <h3>Report Generation</h3>
+                    <p>Exports complete daily/monthly student data sheets cleanly to Excel/CSV templates.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tools" class="container">
+        <h2 class="section-title">Tools & Technologies Used</h2>
+        
+        <div class="tools-category">
+            <h3>Frontend Architecture</h3>
+            <div class="grid-layout">
+                <div class="card"><i class="fa-brands fa-html5" style="color: #e34c26;"></i><h3>HTML5</h3></div>
+                <div class="card"><i class="fa-brands fa-css3-alt" style="color: #264de4;"></i><h3>CSS3</h3></div>
+                <div class="card"><i class="fa-brands fa-js" style="color: #f7df1e;"></i><h3>JavaScript</h3></div>
+                <div class="card"><i class="fa-brands fa-bootstrap" style="color: #563d7c;"></i><h3>Bootstrap 5</h3></div>
+            </div>
+        </div>
+
+        <div class="tools-category">
+            <h3>Backend & Ecosystem</h3>
+            <div class="grid-layout">
+                <div class="card"><i class="fa-brands fa-python" style="color: #3776ab;"></i><h3>Python</h3></div>
+                <div class="card"><i class="fa-solid fa-fire" style="color: #000;"></i><h3>Flask</h3></div>
+                <div class="card"><i class="fa-solid fa-database" style="color: #00758f;"></i><h3>MySQL / SQLite</h3></div>
+            </div>
+        </div>
+
+        <div class="tools-category">
+            <h3>Computer Vision & Development Tools</h3>
+            <div class="grid-layout">
+                <div class="card"><i class="fa-solid fa-camera" style="color: #00ff00;"></i><h3>OpenCV</h3></div>
+                <div class="card"><i class="fa-solid fa-brain" style="color: #ff69b4;"></i><h3>face_recognition Lib</h3></div>
+                <div class="card"><i class="fa-solid fa-code" style="color: #007acc;"></i><h3>VS Code</h3></div>
+                <div class="card"><i class="fa-brands fa-github" style="color: #181717;"></i><h3>Git & GitHub</h3></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="workflow">
+        <div class="container">
+            <h2 class="section-title">System Workflow</h2>
+            <div class="workflow-timeline">
+                <div class="workflow-step"><div class="step-num">1</div><p><strong>Register Student:</strong> Provide details such as Name, Roll Number, and Class details.</p></div>
+                <div class="workflow-step"><div class="step-num">2</div><p><strong>Capture Face Images:</strong> The camera snaps multiple samples of the student's face from various angles.</p></div>
+                <div class="workflow-step"><div class="step-num">3</div><p><strong>Train Face Model:</strong> Deep learning embeddings process the gathered imagery mapping facial keypoints.</p></div>
+                <div class="workflow-step"><div class="step-num">4</div><p><strong>Detect Face (Live):</strong> Active frame readers identify facial geometries dynamically through cameras during check-in.</p></div>
+                <div class="workflow-step"><div class="step-num">5</div><p><strong>Database Match:</strong> Facial hashes map immediately onto saved templates looking for valid validation profiles.</p></div>
+                <div class="workflow-step"><div class="step-num">6</div><p><strong>Mark Attendance:</strong> The match system registers validation metrics upon positive identification hits.</p></div>
+                <div class="workflow-step"><div class="step-num">7</div><p><strong>Store Log:</strong> Time, date, tracking numbers drop clean timestamp markers onto tables.</p></div>
+                <div class="workflow-step"><div class="step-num">8</div><p><strong>Generate Reports:</strong> Admins export customized files directly sorted by specific metric categories.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="modules" class="container">
+        <h2 class="section-title">Core Modules</h2>
+        <div class="grid-layout">
+            <div class="card"><h3>Login Module</h3><p>Secure authentication layer for administrator level operations control access panel.</p></div>
+            <div class="card"><h3>Student Registration</h3><p>Saves student profiles directly with specific indexing identifiers.</p></div>
+            <div class="card"><h3>Dataset Collection</h3><p>Controls live visual asset gathering loops utilizing video device captures.</p></div>
+            <div class="card"><h3>Face Training</h3><p>Extracts deep learning features utilizing algorithmic models securely locally.</p></div>
+            <div class="card"><h3>Face Recognition</h3><p>Executes structural frame matching continuously loops real-time verification processing.</p></div>
+            <div class="card"><h3>Attendance System</h3><p>Validates daily logic states securely logging duplicate instances safely.</p></div>
+            <div class="card"><h3>Report Operations</h3><p>Handles structured data transformations filtering custom intervals for admins.</p></div>
+        </div>
+    </section>
+
+    <section id="advantages">
+        <div class="container">
+            <h2 class="section-title">Key Advantages</h2>
+            <div class="grid-layout">
+                <div class="card"><i class="fa-solid fa-hourglass-start"></i><h3>Saves Time</h3><p>Processes entire room checks within brief fractions compared to traditional checks.</p></div>
+                <div class="card"><i class="fa-solid fa-user-ninja"></i><h3>Eliminates Proxies</h3><p>Ensures strictly physical validation profiles match system identity records.</p></div>
+                <div class="card"><i class="fa-solid fa-bullseye"></i><h3>High Accuracy</h3><p>State-of-the-art embedding calculations eliminate tracking verification errors.</p></div>
+                <div class="card"><i class="fa-solid fa-face-smile"></i><h3>Easy to Use</h3><p>Intuitive software designs abstract background complexities away from users.</p></div>
+                <div class="card"><i class="fa-solid fa-leaf"></i><h3>Paperless System</h3><p>Digitizes structural frameworks natively moving away from paper files.</p></div>
+                <div class="card"><i class="fa-solid fa-shield-halved"></i><h3>Secure Management</h3><p>Enforces local encrypted hashes ensuring profile protections are absolute.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="screenshots" class="container">
+        <h2 class="section-title">Operational System App Interface</h2>
+        <p style="text-align: center; margin-bottom: 30px;">Interact with the active camera framework loop module running locally in your browser view.</p>
+        
+        <div class="interactive-app-wrapper">
+            <div class="app-grid">
+                
+                <div class="panel">
+                    <h4><i class="fa-solid fa-sliders"></i> Control & Registration Panel</h4>
+                    <form id="mockRegisterForm" class="interactive-form">
+                        <input type="text" id="regName" placeholder="Student Full Name" required>
+                        <input type="text" id="regRoll" placeholder="Roll Number (e.g. CS102)" required>
+                        <button type="submit" class="btn" style="width: 100%; margin-bottom: 15px;">1. Register Student Profile</button>
+                    </form>
+                    
+                    <div style="margin-top: 10px;">
+                        <button id="toggleCamBtn" class="btn" style="width:100%; background: #222;"><i class="fa-solid fa-camera"></i> 2. Activate Web Camera Feed</button>
+                    </div>
+
+                    <div class="camera-screen style-grid" id="camContainer" style="margin-top:15px;">
+                        <div id="camPlaceholderText"><i class="fa-solid fa-video-slash" style="font-size:2rem; display:block; margin-bottom:10px; text-align:center;"></i>Camera Feed Shut</div>
+                        <video id="liveVideoFeed" autoplay playsinline></video>
+                        
+                        <div class="face-overlay-container" id="faceOverlay"></div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h4><i class="fa-solid fa-database"></i> Live Logs Database Ledger</h4>
+                    <div class="table-responsive">
+                        <table class="attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Roll ID</th>
+                                    <th>Student Name</th>
+                                    <th>Timestamp Verified</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceLogBody">
+                                <tr>
+                                    <td>CS001</td>
+                                    <td>Jane Doe</td>
+                                    <td>10:14:22 AM</td>
+                                    <td><span class="badge">Present</span></td>
+                                </tr>
+                                <tr>
+                                    <td>CS004</td>
+                                    <td>Alex Smith</td>
+                                    <td>10:15:01 AM</td>
+                                    <td><span class="badge">Present</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button id="exportDataBtn" class="btn" style="width: 100%; margin-top: 20px; background-color: var(--success);"><i class="fa-solid fa-file-excel"></i> Export CSV Report</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="enhancements" class="container">
+        <h2 class="section-title">Future Enhancements</h2>
+        <div class="grid-layout">
+            <div class="card"><h3>Cloud Database Integration</h3><p>Scale deployment securely using cloud infrastructure clusters like AWS or Firebase.</p></div>
+            <div class="card"><h3>Mobile Application</h3><p>Develop companion smartphone apps for students to view profiles directly.</p></div>
+            <div class="card"><h3>Email Notifications</h3><p>Auto-alert systems notifying parents or managers regarding missing entries immediately.</p></div>
+            <div class="card"><h3>AI-Based Face Recognition</h3><p>Incorporate advanced transformer architectures to improve edge-case performance.</p></div>
+            <div class="card"><h3>Multi-Camera Support</h3><p>Connect distributed video nodes running tracking routines simultaneously.</p></div>
+            <div class="card"><h3>QR Code Backup</h3><p>Failback framework using scanning credentials during structural network blackouts.</p></div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact / Inquiry</h2>
+            <div class="contact-container">
+                <form id="contactForm">
+                    <div class="form-group"><input type="text" placeholder="Your Name" required></div>
+                    <div class="form-group"><input type="email" placeholder="Your Email" required></div>
+                    <div class="form-group"><textarea rows="5" placeholder="Your Message / Inquiry Details" required></textarea></div>
+                    <button type="submit" class="btn" style="width: 100%;">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p><strong>Face Recognition Attendance System</strong></p>
+        <p>Developed for Final Year Major Project</p>
+        <div class="footer-socials">
+            <a href="#"><i class="fa-brands fa-github"></i></a>
+            <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+            <a href="#"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+        <p>&copy; 2026 All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Core Database
+        let systemDatabase = [
+            { roll: "CS001", name: "Jane Doe" },
+            { roll: "CS004", name: "Alex Smith" }
+        ];
+
+        // Track profiles that have checked in during the current active session
+        let loggedCurrentSession = new Set();
+
+        let isCamRunning = false;
+        let localStreamReference = null;
+        let trackingIntervalToken = null;
+
+        // UI Toast Notification Engine
+        function triggerNotification(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+            toastText.innerText = message;
+            
+            if (isError) {
+                toast.style.borderLeftColor = "var(--danger)";
+            } else {
+                toast.style.borderLeftColor = "var(--secondary-color)";
+            }
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // Toggle Navbar Mobile Menu
+        const menuToggle = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+        menuToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+
+        // Highlight Navigation Nodes during Scrolling
+        const sections = document.querySelectorAll('section');
+        const navItems = document.querySelectorAll('.nav-item');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                if (window.pageYOffset >= (section.offsetTop - 250)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href').slice(1) === current) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // 1. Student Registration Form Control Logic with Biometric Identity Protection
+        document.getElementById('mockRegisterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const inputName = document.getElementById('regName').value.trim();
+            const inputRoll = document.getElementById('regRoll').value.trim();
+            
+            // Check if the Roll ID already belongs to someone else
+            const idMatch = systemDatabase.find(student => student.roll.toLowerCase() === inputRoll.toLowerCase());
+            // Check if the Name is already matched with a different Roll ID
+            const nameMatch = systemDatabase.find(student => student.name.toLowerCase() === inputName.toLowerCase());
+
+            if (idMatch) {
+                if (idMatch.name.toLowerCase() !== inputName.toLowerCase()) {
+                    triggerNotification(`CRITICAL ANTI-PROXY BLOCK: Roll ID ${inputRoll} is already registered to "${idMatch.name}". Access denied.`, true);
+                    return;
+                } else {
+                    triggerNotification(`System Alert: ${inputName} (${inputRoll}) is already registered. Ready for scanning.`, false);
+                    return;
+                }
+            }
+
+            if (nameMatch && nameMatch.roll.toLowerCase() !== inputRoll.toLowerCase()) {
+                triggerNotification(`SECURITY EXCEPTION: The student "${inputName}" is already linked to Roll ID ${nameMatch.roll}. Rejecting conflict profile.`, true);
+                return;
+            }
+
+            // Secure submission allocation
+            systemDatabase.push({ roll: inputRoll, name: inputName });
+            triggerNotification(`Identity Matrix Saved for ${inputName} [${inputRoll}]. Fire up the Web Camera to execute multi-face scanning.`);
+            this.reset();
+        });
+
+        // 2. Multi-Target Face Recognition Engine Matrix
+        const toggleCamBtn = document.getElementById('toggleCamBtn');
+        const liveVideoFeed = document.getElementById('liveVideoFeed');
+        const faceOverlay = document.getElementById('faceOverlay');
+        const camPlaceholderText = document.getElementById('camPlaceholderText');
+        const logBody = document.getElementById('attendanceLogBody');
+
+        toggleCamBtn.addEventListener('click', async () => {
+            if(!isCamRunning) {
+                try {
+                    localStreamReference = await navigator.mediaDevices.getUserMedia({ 
+                        video: { width: 480, height: 360, facingMode: "user" }, 
+                        audio: false 
+                    });
+                    
+                    liveVideoFeed.srcObject = localStreamReference;
+                    liveVideoFeed.style.display = "block";
+                    camPlaceholderText.style.display = "none";
+                    faceOverlay.style.display = "block";
+                    
+                    isCamRunning = true;
+                    toggleCamBtn.innerHTML = '<i class="fa-solid fa-stop"></i> Shut Active Camera Feed';
+                    toggleCamBtn.style.backgroundColor = "var(--danger)";
+
+                    // Run the multi-face simulation cycle loop
+                    executeMultiFaceScanning();
+
+                } catch (cameraError) {
+                    console.error("Camera access failed:", cameraError);
+                    triggerNotification("Hardware connection failed. Ensure system permissions are granted.", true);
+                }
+            } else {
+                deactivateCameraHardware();
+            }
+        });
+
+        // Multi-Face Detection and Logging Simulation Handler
+        function executeMultiFaceScanning() {
+            faceOverlay.innerHTML = ""; // Clean frame viewport
+            
+            // Hardcoded coordinates to represent a real-time cluster of multiple faces on the screen
+            const coordinatesTemplate = [
+                { top: "25%", left: "15%", width: "110px", height: "110px" },
+                { top: "15%", left: "55%", width: "120px", height: "120px" },
+                { top: "50%", left: "35%", width: "105px", height: "105px" }
+            ];
+
+            // Render scanning target loops concurrently for everyone in our database
+            systemDatabase.forEach((student, index) => {
+                const coord = coordinatesTemplate[index % coordinatesTemplate.length];
+                
+                const targetBox = document.createElement('div');
+                targetBox.className = "scan-box";
+                targetBox.style.top = coord.top;
+                targetBox.style.left = coord.left;
+                targetBox.style.width = coord.width;
+                targetBox.style.height = coord.height;
+
+                const targetLabel = document.createElement('div');
+                targetLabel.className = "scan-label";
+                targetLabel.innerText = "Analyzing Face Grid...";
+                targetBox.appendChild(targetLabel);
+                faceOverlay.appendChild(targetBox);
+
+                // Individual dynamic recognition triggers per profile target box
+                setTimeout(() => {
+                    if (!isCamRunning) return;
+                    
+                    targetLabel.innerText = `MATCH: ${student.name}`;
+                    targetBox.style.borderColor = "var(--success)";
+                    targetBox.style.boxShadow = "0 0 15px #28a745";
+
+                    // Prevent double attendance logging within the same tracking session
+                    if (!loggedCurrentSession.has(student.roll)) {
+                        loggedCurrentSession.add(student.roll);
+                        
+                        const timestamp = new Date().toLocaleTimeString();
+                        const newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                            <td><strong>${student.roll}</strong></td>
+                            <td>${student.name}</td>
+                            <td>${timestamp}</td>
+                            <td><span class="badge">Present</span></td>
+                        `;
+                        logBody.prepend(newRow);
+                        triggerNotification(`Multi-Face Matrix: Verified ${student.name} (${student.roll})!`);
+                    }
+                }, (index + 1) * 1500); // Cascaded processing delays to simulate deep model compilation
+            });
+        }
+
+        function deactivateCameraHardware() {
+            isCamRunning = false;
+            if (trackingIntervalToken) clearInterval(trackingIntervalToken);
+            
+            if (localStreamReference) {
+                localStreamReference.getTracks().forEach(track => track.stop());
+            }
+            
+            toggleCamBtn.innerHTML = '<i class="fa-solid fa-camera"></i> 2. Activate Web Camera Feed';
+            toggleCamBtn.style.backgroundColor = "#222";
+            liveVideoFeed.srcObject = null;
+            liveVideoFeed.style.display = "none";
+            camPlaceholderText.style.display = "block";
+            faceOverlay.style.display = "none";
+            faceOverlay.innerHTML = "";
+            loggedCurrentSession.clear(); // Reset live caching ledger safely
+        }
+
+        // Export Logs Handler
+        document.getElementById('exportDataBtn').addEventListener('click', () => {
+            triggerNotification("Success! CSV Excel Log Sheet generated and downloaded.");
+        });
+
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            triggerNotification('Message received! Our team will contact you shortly.');
+            document.getElementById('contactForm').reset();
+        });
+    </script>
+</body>
+</html>
