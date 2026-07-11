@@ -305,11 +305,6 @@ This project is licensed under the **MIT License**.
 # 👨‍💻 Author
 
 **Spandan Parhi**
-
-GitHub: https://github.com/yourusername
-
-LinkedIn: https://linkedin.com/in/yourprofile
-
 ---
 
 # 🌐 Live Demo
